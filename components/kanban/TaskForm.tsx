@@ -107,7 +107,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, task, boardId, co
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalOverlay}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <TouchableWithoutFeedback onPress={() => {}}>
             <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
               style={styles.keyboardAvoidingView}
@@ -138,7 +138,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, task, boardId, co
                         styles.input,
                         { 
                           color: Colors[colorScheme].text,
-                          backgroundColor: Colors[colorScheme].background,
+                          backgroundColor: Colors[colorScheme].card,
                           borderColor: Colors[colorScheme].border
                         }
                       ]}
@@ -158,7 +158,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, task, boardId, co
                         styles.textArea,
                         { 
                           color: Colors[colorScheme].text,
-                          backgroundColor: Colors[colorScheme].background,
+                          backgroundColor: Colors[colorScheme].card,
                           borderColor: Colors[colorScheme].border
                         }
                       ]}
@@ -169,6 +169,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, task, boardId, co
                       multiline
                       numberOfLines={4}
                       textAlignVertical="top"
+                      blurOnSubmit={false}
                     />
                   </View>
 
@@ -229,18 +230,27 @@ const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, task, boardId, co
                     <Text style={styles.buttonText}>Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity 
-                    style={[
-                      styles.button, 
-                      styles.submitButton,
-                      { backgroundColor: Colors[colorScheme].tint },
-                      title.trim() === '' && styles.disabledButton,
-                    ]} 
                     onPress={handleSubmit}
-                    disabled={title.trim() === ''}
                   >
-                    <Text style={[styles.buttonText, styles.submitButtonText]}>
-                      {task ? 'Update' : 'Add'}
-                    </Text>
+                    <View style={{
+                      paddingVertical: 12,
+                      paddingHorizontal: 20,
+                      borderRadius: 8,
+                      marginLeft: 8,
+                      minHeight: 44,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: '#007AFF',
+                    }}>
+                      <Text style={{
+                          fontSize: 16,
+                          fontWeight: '600',
+                          color: '#ffffff',
+                          textAlign: 'center',
+                        }}>
+                        SAVE TASK
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -365,27 +375,32 @@ const styles = StyleSheet.create({
     borderTopColor: '#e0e0e0',
   },
   button: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 8,
     marginLeft: 8,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cancelButton: {
     backgroundColor: '#e0e0e0',
   },
   submitButton: {
-    backgroundColor: '#007AFF',
+    // backgroundColor handled inline
   },
-  disabledButton: {
-    opacity: 0.5,
-  },
+
   buttonText: {
     fontSize: 14,
     fontWeight: '500',
     color: '#333',
   },
   submitButtonText: {
-    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });
 

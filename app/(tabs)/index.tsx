@@ -55,7 +55,7 @@ export default function HomeScreen() {
                   color={Colors[colorScheme].text} 
                 />
               </TouchableOpacity>
-              <KanbanBoard />
+              <KanbanBoard onAddTask={openTaskForm} />
             </View>
           </>
         ) : (
@@ -79,7 +79,7 @@ export default function HomeScreen() {
               </View>
             ) : (
               <View style={styles.smallScreenBoard}>
-                <KanbanBoard />
+                <KanbanBoard onAddTask={openTaskForm} />
               </View>
             )}
           </>

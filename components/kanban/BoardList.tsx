@@ -32,7 +32,7 @@ const BoardList: React.FC = () => {
     const newBoard = addBoard(newBoardTitle.trim());
     setNewBoardTitle('');
     setIsAddingBoard(false);
-    setCurrentBoard(newBoard.id);
+    setCurrentBoard(newBoard);
   };
 
   const handleUpdateBoard = () => {
@@ -55,18 +55,11 @@ const BoardList: React.FC = () => {
   };
 
   const handleDeleteBoard = (boardId: string) => {
-    Alert.alert(
-      'Delete Board',
-      'Are you sure you want to delete this board? All columns and tasks in this board will be deleted.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
-          style: 'destructive', 
-          onPress: () => deleteBoard(boardId) 
-        },
-      ]
-    );
+    // Use window.confirm for web compatibility
+    const confirmed = window.confirm('Are you sure you want to delete this board? All columns and tasks in this board will be deleted.');
+    if (confirmed) {
+      deleteBoard(boardId);
+    }
   };
 
   return (
@@ -137,7 +130,7 @@ const BoardList: React.FC = () => {
                     Colors[colorScheme].tint + '20' : // 20% opacity
                     'transparent' }
               ]}
-              onPress={() => setCurrentBoard(board.id)}
+              onPress={() => setCurrentBoard(board)}
             >
               <View style={styles.boardItemContent}>
                 <IconSymbol 
@@ -180,7 +173,10 @@ const BoardList: React.FC = () => {
               <View style={styles.boardActions}>
                 <TouchableOpacity 
                   style={styles.editButton} 
-                  onPress={() => setEditingBoard({ id: board.id, title: board.title })}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    setEditingBoard({ id: board.id, title: board.title });
+                  }}
                 >
                   <IconSymbol 
                     name="pencil" 
@@ -190,7 +186,10 @@ const BoardList: React.FC = () => {
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.deleteButton} 
-                  onPress={() => handleDeleteBoard(board.id)}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleDeleteBoard(board.id);
+                  }}
                 >
                   <IconSymbol 
                     name="trash" 

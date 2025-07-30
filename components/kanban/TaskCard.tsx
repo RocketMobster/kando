@@ -211,11 +211,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, columnId, onDragStart, isDrag
           style={styles.checkbox} 
           onPress={toggleTaskCompletion}
         >
-          <IconSymbol 
-            name={task.completed ? "checkmark.circle.fill" : "circle"} 
-            size={20} 
-            color={task.completed ? Colors[colorScheme].tint : Colors[colorScheme].tabIconDefault} 
-          />
+          <Text style={{
+            fontSize: 20,
+            color: task.completed ? Colors[colorScheme].tint : Colors[colorScheme].tabIconDefault,
+          }}>
+            {task.completed ? '✓' : '○'}
+          </Text>
         </TouchableOpacity>
         <Text 
           style={[

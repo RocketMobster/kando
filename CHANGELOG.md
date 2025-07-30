@@ -2,6 +2,24 @@
 
 All notable changes to the KanDo app will be documented in this file.
 
+## [0.1.1] - 2024-12-19
+
+### Fixed
+- Fixed save button text visibility in task creation modal
+  - Resolved blank button issue by restructuring TouchableOpacity layout
+  - Improved button styling with proper contrast (white text on blue background)
+  - Removed problematic text shadow effects that caused readability issues
+- Fixed task completion icons displaying as question marks
+  - Replaced Material Icons with reliable Unicode symbols (○ for incomplete, ✓ for complete)
+  - Improved icon reliability across different platforms and rendering contexts
+- Enhanced IconSymbol component with better Material Icon mappings
+- Improved overall UI consistency and accessibility
+
+### Changed
+- Updated task completion visual indicators for better reliability
+- Simplified save button design for improved user experience
+- Enhanced button contrast and readability standards
+
 ## [0.1.0] - 2023-11-30
 
 ### Added

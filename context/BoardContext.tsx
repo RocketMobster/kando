@@ -30,7 +30,7 @@ type BoardContextType = {
   boards: Board[];
   currentBoard: Board | null;
   setCurrentBoard: (board: Board | null) => void;
-  addBoard: (title: string) => void;
+  addBoard: (title: string) => Board;
   updateBoard: (board: Board) => void;
   deleteBoard: (boardId: string) => void;
   addColumn: (boardId: string, title: string) => void;
@@ -84,7 +84,7 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [boards]);
 
   // Board operations
-  const addBoard = (title: string) => {
+  const addBoard = (title: string): Board => {
     const newBoard: Board = {
       id: uuid.v4().toString(),
       title,
@@ -110,6 +110,7 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     setBoards([...boards, newBoard]);
     setCurrentBoard(newBoard);
+    return newBoard;
   };
 
   const updateBoard = (updatedBoard: Board) => {
@@ -120,9 +121,10 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const deleteBoard = (boardId: string) => {
-    setBoards(boards.filter(board => board.id !== boardId));
+    const updatedBoards = boards.filter(board => board.id !== boardId);
+    setBoards(updatedBoards);
     if (currentBoard?.id === boardId) {
-      setCurrentBoard(boards.length > 0 ? boards[0] : null);
+      setCurrentBoard(updatedBoards.length > 0 ? updatedBoards[0] : null);
     }
   };
 

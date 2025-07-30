@@ -9,6 +9,7 @@ import {
   useColorScheme,
   ViewStyle,
   TextStyle,
+  TextInput,
 } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Colors } from '../../constants/Colors';
@@ -64,6 +65,24 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     }
   };
 
+  // Handle web date input change
+  const handleWebDateChange = (dateString: string) => {
+    if (dateString) {
+      const date = new Date(dateString);
+      if (!isNaN(date.getTime())) {
+        onChange(date);
+      }
+    } else {
+      onChange(null);
+    }
+  };
+
+  // Format date for web input (YYYY-MM-DD)
+  const formatDateForWeb = (date: Date | null): string => {
+    if (!date) return '';
+    return date.toISOString().split('T')[0];
+  };
+
   // Clear selected date
   const handleClear = () => {
     onChange(null);
@@ -83,45 +102,92 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         </Text>
       )}
 
-      <TouchableOpacity
-        style={[
-          styles.pickerContainer,
-          {
-            borderColor: getBorderColor(),
-            backgroundColor: colorScheme === 'dark' ? colors.card : '#F9F9FB',
-          },
-        ]}
-        onPress={() => setShowPicker(true)}
-      >
-        <IconSymbol
-          name="calendar"
-          size={20}
-          color={colors.icon}
-          style={styles.icon}
-        />
-        <Text
+      {Platform.OS === 'web' ? (
+        <View
           style={[
-            styles.valueText,
-            { color: value ? colors.text : colors.secondaryText },
-            valueStyle,
+            styles.pickerContainer,
+            {
+              borderColor: getBorderColor(),
+              backgroundColor: colorScheme === 'dark' ? colors.card : '#F9F9FB',
+            },
           ]}
         >
-          {formatDate(value)}
-        </Text>
-        {value && (
-          <TouchableOpacity
-            onPress={handleClear}
-            style={styles.clearButton}
-            hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+          <IconSymbol
+            name="calendar"
+            size={20}
+            color={colors.icon}
+            style={styles.icon}
+          />
+          <input
+            type="date"
+            value={formatDateForWeb(value)}
+            onChange={(e) => handleWebDateChange(e.target.value)}
+            style={{
+              flex: 1,
+              fontSize: 16,
+              backgroundColor: 'transparent',
+              border: 'none',
+              outline: 'none',
+              color: colors.text,
+              fontFamily: 'inherit',
+            }}
+            placeholder={placeholder}
+          />
+          {value && (
+            <TouchableOpacity
+              onPress={handleClear}
+              style={styles.clearButton}
+              hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+            >
+              <IconSymbol
+                name="xmark.circle.fill"
+                size={18}
+                color={colors.icon}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+      ) : (
+        <TouchableOpacity
+          style={[
+            styles.pickerContainer,
+            {
+              borderColor: getBorderColor(),
+              backgroundColor: colorScheme === 'dark' ? colors.card : '#F9F9FB',
+            },
+          ]}
+          onPress={() => setShowPicker(true)}
+        >
+          <IconSymbol
+            name="calendar"
+            size={20}
+            color={colors.icon}
+            style={styles.icon}
+          />
+          <Text
+            style={[
+              styles.valueText,
+              { color: value ? colors.text : colors.secondaryText },
+              valueStyle,
+            ]}
           >
-            <IconSymbol
-              name="xmark.circle.fill"
-              size={18}
-              color={colors.icon}
-            />
-          </TouchableOpacity>
-        )}
-      </TouchableOpacity>
+            {formatDate(value)}
+          </Text>
+          {value && (
+            <TouchableOpacity
+              onPress={handleClear}
+              style={styles.clearButton}
+              hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+            >
+              <IconSymbol
+                name="xmark.circle.fill"
+                size={18}
+                color={colors.icon}
+              />
+            </TouchableOpacity>
+          )}
+        </TouchableOpacity>
+      )}
 
       {error && (
         <Text style={[styles.errorText, { color: colors.error }]}>
@@ -129,55 +195,57 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         </Text>
       )}
 
-      {/* Date Picker */}
-      {Platform.OS === 'ios' ? (
-        // iOS uses Modal
-        <Modal
-          visible={showPicker}
-          transparent={true}
-          animationType="slide"
-        >
-          <View style={styles.modalContainer}>
-            <View
-              style={[
-                styles.modalContent,
-                { backgroundColor: colors.card },
-              ]}
-            >
-              <View style={styles.modalHeader}>
-                <TouchableOpacity
-                  onPress={() => setShowPicker(false)}
-                  style={styles.modalButton}
-                >
-                  <Text style={{ color: colors.tint }}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setShowPicker(false)}
-                  style={styles.modalButton}
-                >
-                  <Text style={{ color: colors.tint }}>Done</Text>
-                </TouchableOpacity>
+      {/* Date Picker - Only for mobile platforms */}
+      {Platform.OS !== 'web' && (
+        Platform.OS === 'ios' ? (
+          // iOS uses Modal
+          <Modal
+            visible={showPicker}
+            transparent={true}
+            animationType="slide"
+          >
+            <View style={styles.modalContainer}>
+              <View
+                style={[
+                  styles.modalContent,
+                  { backgroundColor: colors.card },
+                ]}
+              >
+                <View style={styles.modalHeader}>
+                  <TouchableOpacity
+                    onPress={() => setShowPicker(false)}
+                    style={styles.modalButton}
+                  >
+                    <Text style={{ color: colors.tint }}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setShowPicker(false)}
+                    style={styles.modalButton}
+                  >
+                    <Text style={{ color: colors.tint }}>Done</Text>
+                  </TouchableOpacity>
+                </View>
+                <DateTimePicker
+                  value={value || new Date()}
+                  mode="date"
+                  display="spinner"
+                  onChange={handleChange}
+                  style={styles.datePicker}
+                  textColor={colors.text}
+                />
               </View>
-              <DateTimePicker
-                value={value || new Date()}
-                mode="date"
-                display="spinner"
-                onChange={handleChange}
-                style={styles.datePicker}
-                textColor={colors.text}
-              />
             </View>
-          </View>
-        </Modal>
-      ) : (
-        // Android shows the native picker directly
-        showPicker && (
-          <DateTimePicker
-            value={value || new Date()}
-            mode="date"
-            display="default"
-            onChange={handleChange}
-          />
+          </Modal>
+        ) : (
+          // Android shows the native picker directly
+          showPicker && (
+            <DateTimePicker
+              value={value || new Date()}
+              mode="date"
+              display="default"
+              onChange={handleChange}
+            />
+          )
         )
       )}
     </View>
@@ -210,6 +278,11 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     padding: 4,
+  },
+  webDateInput: {
+    fontSize: 16,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
   },
   errorText: {
     fontSize: 14,

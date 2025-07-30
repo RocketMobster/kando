@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Alert,
   Dimensions,
   Animated,
   PanResponder,
@@ -19,7 +18,11 @@ import { Colors } from '@/constants/Colors';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TaskCard from './TaskCard';
 
-const KanbanBoard: React.FC = () => {
+interface KanbanBoardProps {
+  onAddTask?: (task: any, columnId: string) => void;
+}
+
+const KanbanBoard: React.FC<KanbanBoardProps> = ({ onAddTask }) => {
   const { currentBoard, addColumn, updateColumn, deleteColumn, moveTask } = useBoard();
   const [isAddingColumn, setIsAddingColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState('');
@@ -48,7 +51,7 @@ const KanbanBoard: React.FC = () => {
     if (!currentBoard) return;
     
     if (newColumnTitle.trim() === '') {
-      Alert.alert('Error', 'Column title cannot be empty');
+      window.alert('Column title cannot be empty');
       return;
     }
 
@@ -61,11 +64,11 @@ const KanbanBoard: React.FC = () => {
     if (!currentBoard || !editingColumn) return;
 
     if (editingColumn.title.trim() === '') {
-      Alert.alert('Error', 'Column title cannot be empty');
+      window.alert('Column title cannot be empty');
       return;
     }
 
-    const column = currentBoard.columns.find(col => col.id === editingColumn.id);
+    const column = currentBoard.columns?.find(col => col.id === editingColumn.id);
     if (column) {
       updateColumn(currentBoard.id, {
         ...column,
@@ -79,18 +82,10 @@ const KanbanBoard: React.FC = () => {
   const handleDeleteColumn = (columnId: string) => {
     if (!currentBoard) return;
 
-    Alert.alert(
-      'Delete Column',
-      'Are you sure you want to delete this column? All tasks in this column will be deleted.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
-          style: 'destructive', 
-          onPress: () => currentBoard && deleteColumn(currentBoard.id, columnId) 
-        },
-      ]
-    );
+    const confirmed = window.confirm('Are you sure you want to delete this column? All tasks in this column will be deleted.');
+    if (confirmed) {
+      deleteColumn(currentBoard.id, columnId);
+    }
   };
 
   const handleDragStart = (taskId: string, columnId: string) => {
@@ -184,7 +179,7 @@ const KanbanBoard: React.FC = () => {
         snapToInterval={COLUMN_WIDTH + COLUMN_MARGIN * 2}
         decelerationRate="fast"
       >
-        {currentBoard.columns.map((column) => (
+        {currentBoard.columns?.map((column) => (
           <View 
             key={column.id} 
             style={[
@@ -251,18 +246,8 @@ const KanbanBoard: React.FC = () => {
                   { borderColor: Colors[colorScheme].border }
                 ]}
                 onPress={() => {
-                  if (currentBoard) {
-                    Alert.alert(
-                      'Add Task',
-                      'This will navigate to the Add Task screen',
-                      [
-                        { text: 'Cancel', style: 'cancel' },
-                        { 
-                          text: 'Continue', 
-                          onPress: () => console.log('Navigate to add task screen for column:', column.id) 
-                        },
-                      ]
-                    );
+                  if (currentBoard && onAddTask) {
+                    onAddTask(null, column.id);
                   }
                 }}
               >

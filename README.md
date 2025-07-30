@@ -53,6 +53,18 @@ Built for creators, freelancers, and everyday doers, KanDo blends visual task bo
 
 ## Changelog
 
+### Version 0.1.1 (Latest)
+
+- **Bug Fixes**:
+  - Fixed save button text visibility in task creation modal
+  - Resolved task completion icons displaying as question marks
+  - Improved button styling with proper contrast and readability
+  - Enhanced IconSymbol component reliability
+- **UI Improvements**:
+  - Replaced Material Icons with reliable Unicode symbols for task completion
+  - Simplified save button design for better user experience
+  - Enhanced overall UI consistency and accessibility
+
 ### Version 0.1.0
 
 - Initial app structure and setup
