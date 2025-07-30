@@ -1,8 +1,19 @@
-# Welcome to your Expo app 👋
+# KanDo - Your day, done your way
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+KanDo is the no-fuss Kanban app that helps you crush your to-do list with clarity and confidence. 
+Built for creators, freelancers, and everyday doers, KanDo blends visual task boards with a simple, mobile-first experience. Drag, drop, and dominate your day with a tool that's as flexible as you are. From quick wins to long-haul projects, KanDo keeps you focused, motivated, and moving forward—because you can do it.
 
-## Get started
+## Features
+
+- **Intuitive Kanban Boards**: Create and manage multiple boards with customizable columns
+- **Responsive Design**: Works seamlessly across mobile, tablet, and desktop devices
+- **Task Management**: Create, edit, and organize tasks with priorities and due dates
+- **Drag and Drop**: Easily move tasks between columns
+- **Dark/Light Mode**: Choose your preferred theme
+
+## Development
+
+### Getting Started
 
 1. Install dependencies
 
@@ -13,38 +24,55 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 2. Start the app
 
    ```bash
-   npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+3. Open the app in your preferred environment:
+   - iOS simulator
+   - Android emulator
+   - Expo Go on your physical device
+   - Web browser
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Tech Stack
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **Framework**: React Native with Expo
+- **Navigation**: Expo Router
+- **State Management**: React Context API
+- **Storage**: AsyncStorage for local data persistence
+- **UI Components**: Custom components with responsive design
 
-## Get a fresh project
+### Project Structure
 
-When you're ready, run:
+- `/app`: Main application screens using file-based routing
+- `/components`: Reusable UI components
+  - `/kanban`: Kanban-specific components (BoardList, KanbanBoard, TaskCard, etc.)
+  - `/ui`: Generic UI components (Button, Card, TextField, DatePicker, etc.)
+- `/context`: Application state management
+- `/hooks`: Custom React hooks
+- `/constants`: App-wide constants and theme configuration
 
-```bash
-npm run reset-project
-```
+## Changelog
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Version 0.1.0
 
-## Learn more
+- Initial app structure and setup
+- Implemented BoardContext for state management
+- Created core Kanban components:
+  - BoardList with add/edit/delete functionality
+  - KanbanBoard with column management
+  - TaskCard with priority indicators and completion status
+  - TaskForm for creating and editing tasks
+- Added responsive design with useResponsiveLayout hook
+- Implemented UI component library:
+  - Button component with multiple variants
+  - Card component for consistent styling
+  - TextField component for input fields
+  - DatePicker component for due date selection
+  - IconSymbol component for consistent icon usage
+- Enhanced Colors system with light/dark mode support
+- Added drag-and-drop functionality for tasks
+- Implemented data persistence with AsyncStorage
 
-To learn more about developing your project with Expo, look at the following resources:
+## License
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+MIT

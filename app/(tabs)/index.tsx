@@ -1,75 +1,135 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import React, { useState } from 'react';
+import { StyleSheet, View, SafeAreaView, Platform, StatusBar, TouchableOpacity } from 'react-native';
+import { useBoard } from '@/context/BoardContext';
+import BoardList from '@/components/kanban/BoardList';
+import KanbanBoard from '@/components/kanban/KanbanBoard';
+import TaskForm from '@/components/kanban/TaskForm';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
+import { Colors } from '@/constants/Colors';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export default function HomeScreen() {
+  const { currentBoard } = useBoard();
+  const [taskFormVisible, setTaskFormVisible] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedColumn, setSelectedColumn] = useState('');
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const colorScheme = useColorScheme();
+  const { isHorizontalLayout, sidebarWidth, boardWidth, isSmallScreen } = useResponsiveLayout();
+
+  const openTaskForm = (task = null, columnId = '') => {
+    setSelectedTask(task);
+    setSelectedColumn(columnId);
+    setTaskFormVisible(true);
+  };
+
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible);
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <SafeAreaView 
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].background }
+      ]}
+    >
+      <View style={[styles.content, { flexDirection: isHorizontalLayout ? 'row' : 'column' }]}>
+        {isHorizontalLayout ? (
+          // Horizontal layout for medium and large screens
+          <>
+            {sidebarVisible && (
+              <View style={[styles.sidebar, { width: sidebarWidth }]}>
+                <BoardList />
+              </View>
+            )}
+            <View style={[styles.board, { width: sidebarVisible ? boardWidth : '100%' }]}>
+              <TouchableOpacity 
+                style={styles.toggleButton} 
+                onPress={toggleSidebar}
+              >
+                <IconSymbol 
+                  name={sidebarVisible ? "sidebar.left" : "sidebar.right"} 
+                  size={24} 
+                  color={Colors[colorScheme].text} 
+                />
+              </TouchableOpacity>
+              <KanbanBoard />
+            </View>
+          </>
+        ) : (
+          // Vertical layout for small screens
+          <>
+            <View style={styles.smallScreenHeader}>
+              <TouchableOpacity 
+                style={styles.toggleButton} 
+                onPress={toggleSidebar}
+              >
+                <IconSymbol 
+                  name={sidebarVisible ? "list.bullet.rectangle" : "rectangle.grid.1x2"} 
+                  size={24} 
+                  color={Colors[colorScheme].text} 
+                />
+              </TouchableOpacity>
+            </View>
+            {sidebarVisible ? (
+              <View style={styles.smallScreenSidebar}>
+                <BoardList />
+              </View>
+            ) : (
+              <View style={styles.smallScreenBoard}>
+                <KanbanBoard />
+              </View>
+            )}
+          </>
+        )}
+      </View>
+
+      {currentBoard && (
+        <TaskForm
+          visible={taskFormVisible}
+          onClose={() => setTaskFormVisible(false)}
+          task={selectedTask}
+          boardId={currentBoard.id}
+          columnId={selectedColumn}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  content: {
+    flex: 1,
+  },
+  sidebar: {
+    borderRightWidth: 1,
+    borderRightColor: '#e0e0e0',
+  },
+  board: {
+    flex: 1,
+  },
+  toggleButton: {
+    padding: 12,
+    zIndex: 10,
+  },
+  smallScreenHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    justifyContent: 'flex-end',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  smallScreenSidebar: {
+    flex: 1,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  smallScreenBoard: {
+    flex: 1,
   },
 });

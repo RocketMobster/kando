@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "kanban-todo-app",
-    "slug": "kanban-todo-app",
-    "version": "1.0.0",
+    "name": "KanDo",
+    "slug": "kando",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "kanbantodoapp",
+    "scheme": "kando",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
